@@ -1,3 +1,5 @@
+/* code door Thibault voor Ingegno*/
+
 #include <SPI.h>
 #include <Wire.h> 
 #include <Adafruit_GFX.h>
