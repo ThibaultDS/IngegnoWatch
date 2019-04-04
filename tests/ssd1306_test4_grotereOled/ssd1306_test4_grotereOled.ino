@@ -37,7 +37,9 @@ void setup() {
   // In dit stadium heeft de WiFi-manager met succes een verbinding met een netwerk tot stand gebracht, of anders probeert hij het over 180 seconden opnieuw
   //----------------------------------------------------------------------------------------------------------------------
   server.begin(); // Start the webserver  
-  server.on("/", HandleClient); // Hier zeg je wat de server moet doen als hij aan staat
+  server.on("/", HandleClientROOT); // Hier zeg je wat de server moet doen als hij aan staat
+  server.on("/CIRKEL", HTTP_POST, HandleClientCIRC); // Hier zeg je wat de server moet doen als hij aan staat
+  server.on("/VIERKANT", HTTP_POST, HandleClientVIERK); // Hier zeg je wat de server moet doen als hij aan staat
 
   //Hier start je het scherm op en doe je alles weg dat nog in buffer zou kunnen zitten.
   //----------------------------------------------------------------------------------------------------------------------
@@ -48,7 +50,39 @@ void setup() {
   opstarten();  //Eerste dat geprint wordt bij opstarten
 }
 
-void HandleClient() //de webpagina aanmaken
+void HandleClientROOT() //de webpagina aanmaken
+{
+  if (server.args() > 0 ) { // Arguments were received
+    for ( uint8_t i = 0; i < server.args(); i++ ) {
+      Argument_Name = server.argName(i);
+      if (server.argName(i) == "user_input") {
+        input = server.arg(i);
+        Clients_Response = server.arg(i);
+        
+      }
+    }
+  }
+
+  writeText();
+      Serial.println( "TEKST DOEN ");
+  makeSite();
+}
+  
+void HandleClientVIERK() //de webpagina aanmaken
+{
+  // toon vierkant
+      Serial.println( "VIERKANT DOEN ");
+  vierkant();
+  makeSite();
+}
+void HandleClientCIRC() //de webpagina aanmaken
+{
+  // toon cirkel
+      Serial.println( "CIRKEL DOEN ");
+  makeSite();
+}
+
+void makeSite() //de webpagina aanmaken
 {
   String IPaddress = WiFi.localIP().toString();
   String webpage;
@@ -66,10 +100,13 @@ void HandleClient() //de webpagina aanmaken
     webpage += "<form action='http://"+IPaddress+"' method='POST'>";  //gegevens in adresbalk
     webpage += "<h1>Ingegno Watch</h1><br>";  //titel
     webpage += "Geef iets in om te printen (20 tekens max) of kies een figuur<br>";  //text op nieuwe lijn, <br> kan worden gezien als een end line
-    //webpage += "<input type='text' name='user_input'>&nbsp;<input type='submit' value='Enter'><br><br>";  //textbox en Enter toets aanmaken
-    webpage += "<input type='text' name='user_input'><br><br><button class=\"button\">Enter</button><br><br>";  //textbox en Enter toets aanmaken
-    webpage += "<button class=\"button\">Cirkel</button>&nbsp;";  //Cirkel butten aanmaken met witruimte (= &nbsp;) voor de volgende button
-    webpage += "<button class=\"button\">Vierkant</button>";  //Vierkant butten aanmaken 
+     webpage += "<input type='text' name='user_input'><br><br><button class=\"button\" value=\"0\">Enter</button><br><br>";  //textbox en Enter toets aanmaken
+    webpage += "</form>";
+    webpage += "<form action=\"/CIRKEL\" method='POST'>";
+    webpage += "<button class=\"button\" value=\"1\">Cirkel</button>&nbsp;";  //Cirkel butten aanmaken met witruimte (= &nbsp;) voor de volgende button
+    webpage += "</form>";
+    webpage += "<form action=\"/VIERKANT\" method='POST'>";
+    webpage += "<button class=\"button\" value=\"2\">Vierkant</button>";  //Vierkant butten aanmaken 
     webpage += "<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}"; //text opmaken + centeren
     webpage += "</form>";
     webpage += "</body>";
@@ -82,18 +119,6 @@ void HandleClient() //de webpagina aanmaken
 void loop() {
 
   server.handleClient();
-  if (server.args() > 0 ) { // Arguments were received
-    for ( uint8_t i = 0; i < server.args(); i++ ) {
-      Argument_Name = server.argName(i);
-      if (server.argName(i) == "user_input") {
-        input = server.arg(i);
-        Clients_Response = server.arg(i);
-        
-      }
-    }
-  }
-
-  writeText();
 }
 
 void opstarten() {           //Eerste dat geprint wordt bij opstarten
