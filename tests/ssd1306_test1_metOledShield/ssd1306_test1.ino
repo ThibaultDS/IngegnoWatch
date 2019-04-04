@@ -1,10 +1,7 @@
-/* code door Thibault voor Ingegno*/
-
 #include <SPI.h>
 #include <Wire.h> 
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include <ESP8266WiFi.h>
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 48 // OLED display height, in pixels
@@ -36,9 +33,6 @@ static const unsigned char PROGMEM logo_bmp[] =
   B00000000, B00110000 };
 
 int keuze = 0;
-const char* ssid = "ingegno";
-const char* password = "ingegnofablab";
-WiFiServer server(80);
 
 void setup() {
   Serial.begin(9600);
@@ -51,26 +45,7 @@ void setup() {
 
   // Clear the buffer
   display.clearDisplay();
-
-  Serial.print("Verbonden met: ");
-  Serial.println(ssid);
-
-  WiFi.begin(ssid,password);
-
- while(WiFi.status() != WL_CONNECTED)
-  {
-    delay(500);
-    Serial.print(".");
-  }
-
-  Serial.println("");
-  Serial.println("Wifi verbonden");
-
-  server.begin();
-  Serial.println("Server geïniteerd");
-
-  Serial.println("Binnenkomen via een web navigator met IP: ");
-  Serial.println(WiFi.localIP());
+ 
 }
 
 void loop() {
