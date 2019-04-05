@@ -10,14 +10,18 @@
 
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0);
 
-const char* ssid = "ingegno"; //Geef hier wifi in
-const char* password = "ingegnofablab"; //Geef hier ww in
+//const char* ssid = "ingegno"; //Geef hier wifi in
+//const char* password = "ingegnofablab"; //Geef hier ww in
+
+const char* ssid = "jupinew"; //Geef hier wifi in
+const char* password = "Francesco8goesNUTz"; //Geef hier ww in
 
 WiFiClient client;
 ESP8266WebServer server(80);
 String Argument_Name, Clients_Response;
 String input; //string die geprint wordt (max 20 characters per lijn)
-int groote_vierkant = 30;  // mag veranderd worden
+int groote_vierkant = 20;  // mag veranderd worden
+int groote_driehoek = 20; // mag veranderd worden
 
 
 void setup() {
@@ -38,7 +42,7 @@ void setup() {
   //----------------------------------------------------------------------------------------------------------------------
   server.begin(); // Start the webserver  
   server.on("/", HandleClientROOT); // Hier zeg je wat de server moet doen als hij aan staat
-  server.on("/CIRKEL", HTTP_POST, HandleClientCIRC); // Hier zeg je wat de server moet doen als hij aan staat
+  server.on("/DRIEHOEK", HTTP_POST, HandleClientCIRC); // Hier zeg je wat de server moet doen als hij aan staat
   server.on("/VIERKANT", HTTP_POST, HandleClientVIERK); // Hier zeg je wat de server moet doen als hij aan staat
 
   //Hier start je het scherm op en doe je alles weg dat nog in buffer zou kunnen zitten.
@@ -77,8 +81,9 @@ void HandleClientVIERK() //de webpagina aanmaken
 }
 void HandleClientCIRC() //de webpagina aanmaken
 {
-  // toon cirkel
-      Serial.println( "CIRKEL DOEN ");
+  // toon driehoek
+      Serial.println( "DRIEHOEK DOEN ");
+  driehoek();    
   makeSite();
 }
 
@@ -102,8 +107,8 @@ void makeSite() //de webpagina aanmaken
     webpage += "Geef iets in om te printen (20 tekens max) of kies een figuur<br>";  //text op nieuwe lijn, <br> kan worden gezien als een end line
      webpage += "<input type='text' name='user_input'><br><br><button class=\"button\" value=\"0\">Enter</button><br><br>";  //textbox en Enter toets aanmaken
     webpage += "</form>";
-    webpage += "<form action=\"/CIRKEL\" method='POST'>";
-    webpage += "<button class=\"button\" value=\"1\">Cirkel</button>&nbsp;";  //Cirkel butten aanmaken met witruimte (= &nbsp;) voor de volgende button
+    webpage += "<form action=\"/DRIEHOEK\" method='POST'>";
+    webpage += "<button class=\"button\" value=\"1\">Driehoek</button>&nbsp;";  //Driehoek butten aanmaken met witruimte (= &nbsp;) voor de volgende button
     webpage += "</form>";
     webpage += "<form action=\"/VIERKANT\" method='POST'>";
     webpage += "<button class=\"button\" value=\"2\">Vierkant</button>";  //Vierkant butten aanmaken 
@@ -159,6 +164,25 @@ void vierkant() {           //Eerste dat geprint wordt bij opstarten
         u8g2.drawStr(lengte+x,lengte/2+y,".");
     }
   } 
+  u8g2.sendBuffer();          // transfer internal memory to the display 
+  
+}
+
+void driehoek() {           //Eerste dat geprint wordt bij opstarten
+
+  int lengte = 64 - groote_driehoek;
+  int test = 2; 
+  u8g2.clearBuffer();
+  u8g2.setFont(u8g2_font_ncenB08_tr);  // gekozen font
+  for(int y = 0; y < groote_driehoek/2; y++)
+  {
+    for(int x = 0; x < test; x+=2)
+    {
+        //x++;
+        u8g2.drawStr(lengte+x,lengte/2+y,".");
+    }
+    test += 2;
+  }  
   u8g2.sendBuffer();          // transfer internal memory to the display 
   
 }
